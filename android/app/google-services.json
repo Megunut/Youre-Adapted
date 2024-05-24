@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "506382140602",
+    "project_id": "book-adaptation-review",
+    "storage_bucket": "book-adaptation-review.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506382140602:android:f27eedb6b4a4741375ee83",
+        "android_client_info": {
+          "package_name": "com.example.book_review"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjhzwWODObjIekR0QmUqHanUYbX0ZxKjE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
