@@ -35,6 +35,6 @@ class _SplashState extends State<SplashScreen> {
 
   Widget splash() {
     return Center(
-        child: Container(child: Lottie.asset("assets/book_splash.json")));
+        child: Container(child: Lottie.asset("assets/lottie_book.json")));
   }
 }
