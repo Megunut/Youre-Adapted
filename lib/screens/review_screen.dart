@@ -47,6 +47,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       ),
       body: Stack(
         children: [
+          // Main content of the screen
           SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 80.0), // Add padding to avoid being overlapped by the button
             child: FutureBuilder(
@@ -58,6 +59,26 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Display the similarity rating widget
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                "Similarity",
+                                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 32),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.star, color: Colors.orange),
+                                  Text("${parseValue(data['averageSimilarityScore'])} (${parseValue(data['numberOfRatings'])} reviews)"),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Section for book details and ratings
                         SectionHeader(title: "Book"),
                         BookCard(
                           title: data['bookTitle'],
@@ -70,6 +91,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
                           averageSimilarityScore: parseValue(data['averageSimilarityScore']),
                           onPressed: () {},
                         ),
+                        // Source Material Rating Widget
+                        SourceMaterialRating(
+                          averageSourceMaterialScore: parseValue(data['averageSourceMaterialScore']),
+                          numberOfRatings: parseValue(data['numberOfRatings']),
+                        ),
+                        // Section for adaptation details and ratings
                         SectionHeader(title: "Movie"),
                         BookCard(
                           title: data['adaptationTitle'].toString(),
@@ -82,6 +109,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
                           averageSimilarityScore: parseValue(data['averageSimilarityScore']),
                           onPressed: () {},
                         ),
+                        // Adaptation Rating Widget
+                        AdaptationRating(
+                          averageAdaptationScore: parseValue(data['averageAdaptationScore']),
+                          numberOfRatings: parseValue(data['numberOfRatings']),
+                        ),
+                        // Section for user reviews
                         SectionHeader(title: "User Reviews"),
                         _buildReviewList(snapshot.data!.id),
                       ],
@@ -94,6 +127,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               },
             ),
           ),
+          // Positioned button at the bottom of the screen
           Positioned(
             bottom: 16.0,
             left: 50.0, // Adjusted horizontal padding to make the button smaller
@@ -124,6 +158,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
+  // Function to build the review list
   Widget _buildReviewList(String bookID) {
     return StreamBuilder<QuerySnapshot>(
       stream: db.collection('rating').where('bookID', isEqualTo: bookID).snapshots(),
@@ -143,56 +178,73 @@ class _ReviewScreenState extends State<ReviewScreen> {
             var date = timestamp.toDate();
             var formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(date);
 
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 3,
-                child: ListTile(
-                  leading: CircleAvatar(
-                    child: Icon(Icons.person),
-                  ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'Source Material Score: ${review['sourceMaterialScore']}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+            return FutureBuilder<DocumentSnapshot>(
+              future: db.collection('users').doc(review['userID']).get(),
+              builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.done) {
+                  if (userSnapshot.hasData) {
+                    var userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        elevation: 3,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            child: Icon(Icons.person),
                           ),
-                          Icon(Icons.star, color: Colors.orange, size: 16),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Adaptation Score: ${review['adaptationScore']}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userData['name'],
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Source Material Score: ${review['sourceMaterialScore']}',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Icon(Icons.star, color: Colors.orange, size: 16),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Adaptation Score: ${review['adaptationScore']}',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Icon(Icons.star, color: Colors.orange, size: 16),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Likeness Score: ${review['similarityScore']}',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Icon(Icons.star, color: Colors.orange, size: 16),
+                                ],
+                              ),
+                              Text(
+                                'Submitted on: $formattedDate',
+                                style: TextStyle(color: Colors.grey, fontSize: 12),
+                              ),
+                            ],
                           ),
-                          Icon(Icons.star, color: Colors.orange, size: 16),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Likeness Score: ${review['similarityScore']}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(review['comment']),
                           ),
-                          Icon(Icons.star, color: Colors.orange, size: 16),
-                        ],
+                        ),
                       ),
-                      Text(
-                        'Submitted on: $formattedDate',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(review['comment']),
-                  ),
-                ),
-              ),
+                    );
+                  } else {
+                    return Center(child: Text("User data not available"));
+                  }
+                }
+                return Center(child: CircularProgressIndicator());
+              },
             );
           },
         );
@@ -201,6 +253,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 }
 
+// SectionHeader widget
 class SectionHeader extends StatelessWidget {
   final String title;
 
@@ -218,189 +271,70 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
-// class BookCard extends StatelessWidget {
-//   final String title;
-//   final String subtitle;
-//   final String imageUrl;
-//   final String description;
-//   final VoidCallback onPressed;
+// SourceMaterialRating widget
+class SourceMaterialRating extends StatelessWidget {
+  final int averageSourceMaterialScore;
+  final int numberOfRatings;
 
-//   const BookCard({
-//     Key? key,
-//     required this.title,
-//     required this.subtitle,
-//     required this.imageUrl,
-//     required this.description,
-//     required this.onPressed,
-//   }) : super(key: key);
-//   const BookCard({
-//     Key? key,
-//     required this.title,
-//     required this.subtitle,
-//     required this.imageUrl,
-//     required this.description,
-//     required this.onPressed,
-//   }) : super(key: key);
+  const SourceMaterialRating({
+    Key? key,
+    required this.averageSourceMaterialScore,
+    required this.numberOfRatings,
+  }) : super(key: key);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(16.0),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           ListTile(
-//             contentPadding: EdgeInsets.zero,
-//             title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-//             subtitle: Text(subtitle),
-//             trailing: Icon(Icons.favorite_border),
-//           ),
-//           SizedBox(height: 16),
-//           Center(
-//             child: Image.network(
-//               imageUrl,
-//               fit: BoxFit.cover,
-//               width: MediaQuery.of(context).size.width * 0.6, // Adjust image width based on screen width
-//             ),
-//           ),
-//           SizedBox(height: 16),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Column(
-//                 children: [
-//                   Text(
-//                     "Similarity",
-//                     style: TextStyle(fontWeight: FontWeight.bold),
-//                   ),
-//                   Row(
-//                     children: [
-//                       Icon(Icons.star, color: Colors.orange),
-//                       Text("4.5 (44 reviews)"),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//               SizedBox(width: 40),
-//               Column(
-//                 children: [
-//                   Text(
-//                     "Rating",
-//                     style: TextStyle(fontWeight: FontWeight.bold),
-//                   ),
-//                   Row(
-//                     children: [
-//                       Icon(Icons.star, color: Colors.orange),
-//                       Text("3.2 (23 reviews)"),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           ),
-//           SizedBox(height: 16),
-//           Text(
-//             "Summary",
-//             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-//           ),
-//           Divider(),
-//           Text(description),
-//           SizedBox(height: 16),
-//           Center(
-//             child: ElevatedButton(
-//               onPressed: onPressed,
-//               style: ElevatedButton.styleFrom(
-//                 foregroundColor: Colors.white, backgroundColor: Colors.pink, // text color
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(18.0),
-//                 ),
-//               ),
-//               child: Text('Submit a Review'),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(16.0),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           ListTile(
-//             contentPadding: EdgeInsets.zero,
-//             title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-//             subtitle: Text(subtitle),
-//             trailing: Icon(Icons.favorite_border),
-//           ),
-//           SizedBox(height: 16),
-//           Center(
-//             child: Image.network(
-//               imageUrl,
-//               fit: BoxFit.cover,
-//               width: MediaQuery.of(context).size.width * 0.6, // Adjust image width based on screen width
-//             ),
-//           ),
-//           SizedBox(height: 16),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Column(
-//                 children: [
-//                   Text(
-//                     "Similarity",
-//                     style: TextStyle(fontWeight: FontWeight.bold),
-//                   ),
-//                   Row(
-//                     children: [
-//                       Icon(Icons.star, color: Colors.orange),
-//                       Text("4.5 (44 reviews)"),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//               SizedBox(width: 40),
-//               Column(
-//                 children: [
-//                   Text(
-//                     "Rating",
-//                     style: TextStyle(fontWeight: FontWeight.bold),
-//                   ),
-//                   Row(
-//                     children: [
-//                       Icon(Icons.star, color: Colors.orange),
-//                       Text("3.2 (23 reviews)"),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           ),
-//           SizedBox(height: 16),
-//           Text(
-//             "Summary",
-//             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-//           ),
-//           Divider(),
-//           Text(description),
-//           SizedBox(height: 16),
-//           Center(
-//             child: ElevatedButton(
-//               onPressed: onPressed,
-//               style: ElevatedButton.styleFrom(
-//                 foregroundColor: Colors.white, backgroundColor: Colors.pink, // text color
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(18.0),
-//                 ),
-//               ),
-//               child: Text('Submit a Review'),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Text(
+            "Source Material Rating",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.star, color: Colors.orange),
+              Text("$averageSourceMaterialScore ($numberOfRatings reviews)"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// AdaptationRating widget
+class AdaptationRating extends StatelessWidget {
+  final int averageAdaptationScore;
+  final int numberOfRatings;
+
+  const AdaptationRating({
+    Key? key,
+    required this.averageAdaptationScore,
+    required this.numberOfRatings,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Text(
+            "Adaptation Rating",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.star, color: Colors.orange),
+              Text("$averageAdaptationScore ($numberOfRatings reviews)"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
