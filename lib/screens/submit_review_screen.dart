@@ -3,11 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 var db = FirebaseFirestore.instance;
+
 class SubmitReviewScreen extends StatefulWidget {
-  final String reviewType;
   final String bookID;
 
-  SubmitReviewScreen({required this.reviewType, required this.bookID});
+  SubmitReviewScreen({required this.bookID});
 
   @override
   _SubmitReviewScreenState createState() => _SubmitReviewScreenState();
@@ -16,7 +16,7 @@ class SubmitReviewScreen extends StatefulWidget {
 class _SubmitReviewScreenState extends State<SubmitReviewScreen> {
   final _formKey = GlobalKey<FormState>();
   int _selectedBookRating = 0;
-  int _selectedAdaptatioRating = 0;
+  int _selectedAdaptationRating = 0;
   int _selectedSimilarityRating = 0;
   String bookID = '';
   final TextEditingController _reviewController = TextEditingController();
@@ -26,16 +26,19 @@ class _SubmitReviewScreenState extends State<SubmitReviewScreen> {
       bookID = bookid;
     });
   }
+
   void _setBookRating(int rating) {
     setState(() {
       _selectedBookRating = rating;
     });
   }
+
   void _setAdaptationRating(int rating) {
     setState(() {
-      _selectedAdaptatioRating = rating;
+      _selectedAdaptationRating = rating;
     });
   }
+
   void _setSimilarityRating(int rating) {
     setState(() {
       _selectedSimilarityRating = rating;
@@ -47,26 +50,29 @@ class _SubmitReviewScreenState extends State<SubmitReviewScreen> {
       FirebaseAuth auth = FirebaseAuth.instance;
       final User? user = auth.currentUser;
       final uid = user?.uid;
+
       // Submit review logic
       print("Review: ${_reviewController.text}");
       print("Source Material Rating: $_selectedBookRating");
-      print("Adaptation Rating: $_selectedAdaptatioRating");
+      print("Adaptation Rating: $_selectedAdaptationRating");
       print("Rating: $_selectedSimilarityRating");
 
       // Create a new user with a first and last name
-    final rating = <String, dynamic>{
-      "userID": uid,
-      "bookID": bookID,
-      "comment": _reviewController.text,
-      "sourceMaterialScore": _selectedBookRating,
-      "adaptationScore": _selectedAdaptatioRating,
-      "similarityScore": _selectedSimilarityRating,
-      "timestamp": Timestamp.now(),
-    };
+      final rating = <String, dynamic>{
+        "userID": uid,
+        "bookID": bookID,
+        "comment": _reviewController.text,
+        "sourceMaterialScore": _selectedBookRating,
+        "adaptationScore": _selectedAdaptationRating,
+        "similarityScore": _selectedSimilarityRating,
+        "timestamp": Timestamp.now(),
+      };
 
-  // Add a new document with a generated ID
-  db.collection("rating").add(rating).then((DocumentReference doc) =>
-      print('DocumentSnapshot added with ID: ${doc.id}'));
+      // Add a new document with a generated ID
+      db.collection("rating").add(rating).then((DocumentReference doc) {
+        print('DocumentSnapshot added with ID: ${doc.id}');
+        Navigator.pop(context);  // Route back to review_screen.dart
+      });
     }
   }
 
@@ -84,7 +90,7 @@ class _SubmitReviewScreenState extends State<SubmitReviewScreen> {
           child: Column(
             children: [
               Text(
-                'Submit your review for the ${widget.reviewType}',
+                'Submit your review',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               SizedBox(height: 20),
@@ -131,7 +137,7 @@ class _SubmitReviewScreenState extends State<SubmitReviewScreen> {
                 children: List.generate(5, (index) {
                   return IconButton(
                     icon: Icon(
-                      index < _selectedAdaptatioRating ? Icons.star : Icons.star_border,
+                      index < _selectedAdaptationRating ? Icons.star : Icons.star_border,
                       color: Colors.orange,
                     ),
                     onPressed: () => _setAdaptationRating(index + 1),
@@ -160,7 +166,8 @@ class _SubmitReviewScreenState extends State<SubmitReviewScreen> {
               ElevatedButton(
                 onPressed: () {
                   _setBookID(widget.bookID);
-                  _submitReview;},
+                  _submitReview();
+                },
                 child: Text('Submit'),
               ),
             ],
