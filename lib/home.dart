@@ -72,18 +72,6 @@ class HomeScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SignOutButton(),
-/*
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BooksPage(),
-                    ),
-                  );
-                },
-                child: const Text('goto books')),
-*/
           ],
         ),
       ),
