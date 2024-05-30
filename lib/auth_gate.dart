@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart'; // new
+import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'home.dart';
 
 class AuthGate extends StatelessWidget {
@@ -16,8 +16,27 @@ class AuthGate extends StatelessWidget {
         if (!snapshot.hasData) {
           return SignInScreen(
             providers: [
-              EmailAuthProvider(), // new
+              EmailAuthProvider(),
               GoogleProvider(clientId: "506382140602-5nercnd65poa9rn870km523kk5usq09a.apps.googleusercontent.com"),
+            ],
+            actions: [
+              AuthStateChangeAction<UserCreated>((context, state) async {
+                await _createUserProfileIfNeeded(state.credential.user);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignInScreen(
+                      providers: [
+                        EmailAuthProvider(),
+                        GoogleProvider(clientId: "506382140602-5nercnd65poa9rn870km523kk5usq09a.apps.googleusercontent.com"),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              AuthStateChangeAction<SignedIn>((context, state) {
+                _createUserProfileIfNeeded(state.user);
+              }),
             ],
             headerBuilder: (context, constraints, shrinkOffset) {
               return Padding(
@@ -60,5 +79,21 @@ class AuthGate extends StatelessWidget {
         return const HomeScreen();
       },
     );
+  }
+
+  Future<void> _createUserProfileIfNeeded(User? user) async {
+    if (user != null) {
+      DocumentReference userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      DocumentSnapshot docSnapshot = await userDoc.get();
+      if (!docSnapshot.exists) {
+        await userDoc.set({
+          'email': user.email,
+          'name': user.displayName ?? '',
+          'bio': '',
+          'favorites': [],
+          'recentReviews': [],
+        });
+      }
+    }
   }
 }
