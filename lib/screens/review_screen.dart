@@ -29,6 +29,16 @@ class _ReviewScreenState extends State<ReviewScreen> {
     return FirebaseFirestore.instance.collection("book").doc(widget.userId).get();
   }
 
+  int parseValue(dynamic value) {
+    if (value is String) {
+      return int.tryParse(value) ?? 0;
+    } else if (value is int) {
+      return value;
+    } else {
+      return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,31 +53,42 @@ class _ReviewScreenState extends State<ReviewScreen> {
               future: getInfo(),
               builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SectionHeader(title: "Book"),
-                      BookCard(
-                        title: snapshot.data!['bookTitle'],
-                        subtitle: snapshot.data!['author'],
-                        imageUrl: snapshot.data!['bookImageURL'],
-                        description: snapshot.data!['summary'],
-                        onPressed: () {},
-                      ),
-                      SectionHeader(title: "Movie"),
-                      BookCard(
-                        title: snapshot.data!['adaptationTitle'].toString(),
-                        subtitle: snapshot.data!['author'],
-                        imageUrl: snapshot.data!['adaptationImageURL'],
-                        description: snapshot.data!['summary'],
-                        onPressed: () {},
-                      ),
-                      SectionHeader(title: "User Reviews"),
-                      _buildReviewList(snapshot.data!.id),
-                    ],
-                  );
-                } else if (snapshot.connectionState == ConnectionState.none) {
-                  return Text("No data");
+                  if (snapshot.hasData) {
+                    var data = snapshot.data!.data() as Map<String, dynamic>;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SectionHeader(title: "Book"),
+                        BookCard(
+                          title: data['bookTitle'],
+                          subtitle: data['author'],
+                          imageUrl: data['bookImageURL'],
+                          description: data['summary'],
+                          averageSourceMaterialScore: parseValue(data['averageSourceMaterialScore']),
+                          numberOfRatings: parseValue(data['numberOfRatings']),
+                          averageAdaptationScore: parseValue(data['averageAdaptationScore']),
+                          averageSimilarityScore: parseValue(data['averageSimilarityScore']),
+                          onPressed: () {},
+                        ),
+                        SectionHeader(title: "Movie"),
+                        BookCard(
+                          title: data['adaptationTitle'].toString(),
+                          subtitle: data['author'],
+                          imageUrl: data['adaptationImageURL'],
+                          description: data['summary'],
+                          averageSourceMaterialScore: parseValue(data['averageSourceMaterialScore']),
+                          numberOfRatings: parseValue(data['numberOfRatings']),
+                          averageAdaptationScore: parseValue(data['averageAdaptationScore']),
+                          averageSimilarityScore: parseValue(data['averageSimilarityScore']),
+                          onPressed: () {},
+                        ),
+                        SectionHeader(title: "User Reviews"),
+                        _buildReviewList(snapshot.data!.id),
+                      ],
+                    );
+                  } else {
+                    return Center(child: Text("No data available"));
+                  }
                 }
                 return Center(child: CircularProgressIndicator());
               },
@@ -84,7 +105,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   MaterialPageRoute(
                     builder: (context) => SubmitReviewScreen(bookID: widget.userId),
                   ),
-                );
+                ).then((value) {
+                  refreshFeed(); // Refresh the feed when returning from the SubmitReviewScreen
+                });
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -194,7 +217,6 @@ class SectionHeader extends StatelessWidget {
     );
   }
 }
-
 
 // class BookCard extends StatelessWidget {
 //   final String title;
