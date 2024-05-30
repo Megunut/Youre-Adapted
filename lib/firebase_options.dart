@@ -83,5 +83,4 @@ class DefaultFirebaseOptions {
     authDomain: 'book-adaptation-review.firebaseapp.com',
     storageBucket: 'book-adaptation-review.appspot.com',
   );
-
 }
