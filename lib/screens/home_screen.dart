@@ -74,7 +74,7 @@ class BookList extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ReviewScreen(),
+                  builder: (context) => ReviewScreen(userId: '',),
                 ),
               );
             },
