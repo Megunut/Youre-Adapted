@@ -35,7 +35,6 @@ class BookCard extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(subtitle),
-            trailing: Icon(Icons.favorite_border),
           ),
           SizedBox(height: 16),
           Center(
@@ -46,40 +45,6 @@ class BookCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  Text(
-                    "Similarity",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.orange),
-                      Text("$averageSimilarityScore ($numberOfRatings reviews)"),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(width: 40),
-              Column(
-                children: [
-                  Text(
-                    "Rating",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.orange),
-                      Text("$averageSourceMaterialScore ($numberOfRatings reviews)"),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
           SizedBox(height: 16),
           Text(
             "Summary",
@@ -88,6 +53,72 @@ class BookCard extends StatelessWidget {
           Divider(),
           Text(description),
           SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
+
+class SourceMaterialRating extends StatelessWidget {
+  final int averageSourceMaterialScore;
+  final int numberOfRatings;
+
+  const SourceMaterialRating({
+    Key? key,
+    required this.averageSourceMaterialScore,
+    required this.numberOfRatings,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Text(
+            "Source Material Rating",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.star, color: Colors.orange),
+              Text("$averageSourceMaterialScore ($numberOfRatings reviews)"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AdaptationRating extends StatelessWidget {
+  final int averageAdaptationScore;
+  final int numberOfRatings;
+
+  const AdaptationRating({
+    Key? key,
+    required this.averageAdaptationScore,
+    required this.numberOfRatings,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Text(
+            "Adaptation Rating",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.star, color: Colors.orange),
+              Text("$averageAdaptationScore ($numberOfRatings reviews)"),
+            ],
+          ),
         ],
       ),
     );
