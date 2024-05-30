@@ -1,9 +1,25 @@
+import 'package:book_review/screens/review_screen.dart';
 import 'package:flutter/material.dart';
-import '../screens/review_screen.dart';
-import '../widgets/book_card.dart';
 
+// A widget that represents a book card with details and a button to submit a review.
+class BookCard extends StatelessWidget {
+  // Properties for the book card
+  final String title; // Title of the book or movie
+  final String subtitle; // Subtitle (author or director)
+  final String imageUrl; // URL of the image
+  final String description; // Description of the book or movie
+  final VoidCallback onPressed; // Callback function for the button
 
-class HomeScreen extends StatelessWidget {
+  // Constructor to initialize the book card properties
+  const BookCard({
+    Key? key,
+    required this.title,
+    required this.subtitle,
+    required this.imageUrl,
+    required this.description,
+    required this.onPressed,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

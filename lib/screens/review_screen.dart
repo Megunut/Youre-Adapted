@@ -1,6 +1,8 @@
 import 'package:book_review/widgets/book_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../widgets/book_card.dart';
+import 'submit_review_screen.dart';
 
 
 var db = FirebaseFirestore.instance;
@@ -39,7 +41,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     return Scaffold(
       
       appBar: AppBar(
-        title: Text('Submit a Review'),
+        title: Text('Submit a Review'), // App bar title
       ),
       body: SingleChildScrollView(
         child: FutureBuilder(
@@ -56,7 +58,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     imageUrl: snapshot.data!['bookImageURL'],
                     description: snapshot.data!['summary'],
                     onPressed: () {
-                      // Handle submit review for book
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SubmitReviewScreen(reviewType: "Book", bookID: snapshot.data!.id, ),
+                        ),
+                      );
                     },
                   ),
                   SectionHeader(title: "Movie"),
@@ -66,7 +73,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     imageUrl: snapshot.data!['adaptationImageURL'],
                     description: snapshot.data!['summary'],
                     onPressed: () {
-                      // Handle submit review for movie
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SubmitReviewScreen(reviewType: "Book", bookID: snapshot.data!.id, ),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -152,7 +164,7 @@ class SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Text(
         title,
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold), // Header text style
       ),
     );
   }
@@ -173,7 +185,96 @@ class SectionHeader extends StatelessWidget {
 //     required this.description,
 //     required this.onPressed,
 //   }) : super(key: key);
+//   const BookCard({
+//     Key? key,
+//     required this.title,
+//     required this.subtitle,
+//     required this.imageUrl,
+//     required this.description,
+//     required this.onPressed,
+//   }) : super(key: key);
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.all(16.0),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           ListTile(
+//             contentPadding: EdgeInsets.zero,
+//             title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+//             subtitle: Text(subtitle),
+//             trailing: Icon(Icons.favorite_border),
+//           ),
+//           SizedBox(height: 16),
+//           Center(
+//             child: Image.network(
+//               imageUrl,
+//               fit: BoxFit.cover,
+//               width: MediaQuery.of(context).size.width * 0.6, // Adjust image width based on screen width
+//             ),
+//           ),
+//           SizedBox(height: 16),
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Column(
+//                 children: [
+//                   Text(
+//                     "Similarity",
+//                     style: TextStyle(fontWeight: FontWeight.bold),
+//                   ),
+//                   Row(
+//                     children: [
+//                       Icon(Icons.star, color: Colors.orange),
+//                       Text("4.5 (44 reviews)"),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//               SizedBox(width: 40),
+//               Column(
+//                 children: [
+//                   Text(
+//                     "Rating",
+//                     style: TextStyle(fontWeight: FontWeight.bold),
+//                   ),
+//                   Row(
+//                     children: [
+//                       Icon(Icons.star, color: Colors.orange),
+//                       Text("3.2 (23 reviews)"),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ],
+//           ),
+//           SizedBox(height: 16),
+//           Text(
+//             "Summary",
+//             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+//           ),
+//           Divider(),
+//           Text(description),
+//           SizedBox(height: 16),
+//           Center(
+//             child: ElevatedButton(
+//               onPressed: onPressed,
+//               style: ElevatedButton.styleFrom(
+//                 foregroundColor: Colors.white, backgroundColor: Colors.pink, // text color
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(18.0),
+//                 ),
+//               ),
+//               child: Text('Submit a Review'),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 //   @override
 //   Widget build(BuildContext context) {
 //     return Padding(
