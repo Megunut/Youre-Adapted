@@ -45,22 +45,16 @@ class _SubmitReviewScreenState extends State<SubmitReviewScreen> {
     });
   }
 
-  void _submitReview() {
+  Future<void> _submitReview() async {
     if (_formKey.currentState?.validate() ?? false) {
       FirebaseAuth auth = FirebaseAuth.instance;
       final User? user = auth.currentUser;
       final uid = user?.uid;
 
-      // Submit review logic
-      print("Review: ${_reviewController.text}");
-      print("Source Material Rating: $_selectedBookRating");
-      print("Adaptation Rating: $_selectedAdaptationRating");
-      print("Rating: $_selectedSimilarityRating");
-
-      // Create a new user with a first and last name
-      final rating = <String, dynamic>{
+      // Create a new review document
+      final rating = {
         "userID": uid,
-        "bookID": bookID,
+        "bookID": widget.bookID,
         "comment": _reviewController.text,
         "sourceMaterialScore": _selectedBookRating,
         "adaptationScore": _selectedAdaptationRating,
@@ -68,10 +62,38 @@ class _SubmitReviewScreenState extends State<SubmitReviewScreen> {
         "timestamp": Timestamp.now(),
       };
 
-      // Add a new document with a generated ID
-      db.collection("rating").add(rating).then((DocumentReference doc) {
+      await db.collection("rating").add(rating).then((DocumentReference doc) async {
         print('DocumentSnapshot added with ID: ${doc.id}');
-        Navigator.pop(context);  // Route back to review_screen.dart
+        // Fetch the book document
+        DocumentSnapshot bookDoc = await db.collection("book").doc(widget.bookID).get();
+        if (bookDoc.exists) {
+          var data = bookDoc.data() as Map<String, dynamic>;
+
+          // Update total scores and number of ratings
+          int totalSourceMaterialScore = data['totalSourceMaterialScore'] + _selectedBookRating;
+          int totalAdaptationScore = data['totalAdaptationScore'] + _selectedAdaptationRating;
+          int totalSimilarityScore = data['totalSimilarityScore'] + _selectedSimilarityRating;
+          int numberOfRatings = data['numberOfRatings'] + 1;
+
+          // Calculate new averages
+          int averageSourceMaterialScore = totalSourceMaterialScore ~/ numberOfRatings;
+          int averageAdaptationScore = totalAdaptationScore ~/ numberOfRatings;
+          int averageSimilarityScore = totalSimilarityScore ~/ numberOfRatings;
+
+          // Update the book document
+          await db.collection("book").doc(widget.bookID).update({
+            'totalSourceMaterialScore': totalSourceMaterialScore,
+            'totalAdaptationScore': totalAdaptationScore,
+            'totalSimilarityScore': totalSimilarityScore,
+            'numberOfRatings': numberOfRatings,
+            'averageSourceMaterialScore': averageSourceMaterialScore,
+            'averageAdaptationScore': averageAdaptationScore,
+            'averageSimilarityScore': averageSimilarityScore,
+          });
+
+          // Navigate back to the review screen
+          Navigator.pop(context);
+        }
       });
     }
   }
