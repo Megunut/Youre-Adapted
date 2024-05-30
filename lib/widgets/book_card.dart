@@ -5,6 +5,10 @@ class BookCard extends StatelessWidget {
   final String subtitle;
   final String imageUrl;
   final String description;
+  final int averageSourceMaterialScore;
+  final int numberOfRatings;
+  final int averageAdaptationScore;
+  final int averageSimilarityScore;
   final VoidCallback onPressed;
 
   const BookCard({
@@ -13,6 +17,10 @@ class BookCard extends StatelessWidget {
     required this.subtitle,
     required this.imageUrl,
     required this.description,
+    required this.averageSourceMaterialScore,
+    required this.numberOfRatings,
+    required this.averageAdaptationScore,
+    required this.averageSimilarityScore,
     required this.onPressed,
   }) : super(key: key);
 
@@ -50,7 +58,7 @@ class BookCard extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.star, color: Colors.orange),
-                      Text("4.5 (44 reviews)"),
+                      Text("$averageSimilarityScore ($numberOfRatings reviews)"),
                     ],
                   ),
                 ],
@@ -65,7 +73,7 @@ class BookCard extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.star, color: Colors.orange),
-                      Text("3.2 (23 reviews)"),
+                      Text("$averageSourceMaterialScore ($numberOfRatings reviews)"),
                     ],
                   ),
                 ],
