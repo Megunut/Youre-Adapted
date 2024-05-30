@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'title_card.dart';
+import 'carousel.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -7,53 +9,37 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<ProfileScreen>(
-                  builder: (context) => ProfileScreen(
-                      appBar: AppBar(
-                      title: const Text('User Profile'),
-                    ),
-                    actions: [
-                      SignedOutAction((context) {
-                        Navigator.of(context).pop();
-                      })
-                    ],
-                    children: [
-                      const Divider(),
-                      Padding(
-                        padding: const EdgeInsets.all(2),
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Image.asset('assets/flutterfire_300x.png'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          )
-        ],
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Image.asset('assets/dash.png'),
-            Text(
-              'Welcome!',
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
-            const SignOutButton(),
-          ],
+        appBar: AppBar(
+          title: const Text(
+            "You're Adapted",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.black,
         ),
-      ),
-    );
+        body: const SingleChildScrollView(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Carousel(),
+          SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+              height: 220,
+              child: TitleCard(
+                listTitle: 'Highest Rated Source Materials',
+              )),
+          SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+              height: 220,
+              child: TitleCard(listTitle: 'Highest Rated Movie Adaptations')),
+          SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+              height: 220,
+              child: TitleCard(listTitle: 'Highest Similarity Scores')),
+        ])));
   }
 }
