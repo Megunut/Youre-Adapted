@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => profilescreen.ProfileScreen(),
+                  builder: (context) => const profilescreen.ProfileScreen(),
                 ),
               );
             },
@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
             Image.asset('assets/dash.png'),
             Text(
               'Welcome!',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SignOutButton(),
           ],

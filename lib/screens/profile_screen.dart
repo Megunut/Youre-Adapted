@@ -4,6 +4,8 @@ import '../models/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -26,7 +28,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _fetchUserProfile() async {
     try {
       String userID = FirebaseAuth.instance.currentUser?.uid ?? '';
-      UserProfile userProfile = await _userProfileService.getUserProfile(userID);
+      UserProfile userProfile =
+          await _userProfileService.getUserProfile(userID);
       setState(() {
         _userProfile = userProfile;
         _nameController.text = userProfile.name;
@@ -34,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _isLoading = false;
       });
     } catch (e) {
+      // ignore: avoid_print
       print("User profile not found: $e");
       setState(() {
         _isLoading = false;
@@ -58,26 +62,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile'),
+        title: const Text('User Profile'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
                   TextField(
                     controller: _nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: const InputDecoration(labelText: 'Name'),
                   ),
                   TextField(
                     controller: _bioController,
-                    decoration: InputDecoration(labelText: 'Bio'),
+                    decoration: const InputDecoration(labelText: 'Bio'),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _updateUserProfile,
-                    child: Text('Update Profile'),
+                    child: const Text('Update Profile'),
                   ),
                 ],
               ),

@@ -17,7 +17,9 @@ class AuthGate extends StatelessWidget {
           return SignInScreen(
             providers: [
               EmailAuthProvider(),
-              GoogleProvider(clientId: "506382140602-5nercnd65poa9rn870km523kk5usq09a.apps.googleusercontent.com"),
+              GoogleProvider(
+                  clientId:
+                      "506382140602-5nercnd65poa9rn870km523kk5usq09a.apps.googleusercontent.com"),
             ],
             actions: [
               AuthStateChangeAction<UserCreated>((context, state) async {
@@ -28,7 +30,9 @@ class AuthGate extends StatelessWidget {
                     builder: (context) => SignInScreen(
                       providers: [
                         EmailAuthProvider(),
-                        GoogleProvider(clientId: "506382140602-5nercnd65poa9rn870km523kk5usq09a.apps.googleusercontent.com"),
+                        GoogleProvider(
+                            clientId:
+                                "506382140602-5nercnd65poa9rn870km523kk5usq09a.apps.googleusercontent.com"),
                       ],
                     ),
                   ),
@@ -83,7 +87,8 @@ class AuthGate extends StatelessWidget {
 
   Future<void> _createUserProfileIfNeeded(User? user) async {
     if (user != null) {
-      DocumentReference userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      DocumentReference userDoc =
+          FirebaseFirestore.instance.collection('users').doc(user.uid);
       DocumentSnapshot docSnapshot = await userDoc.get();
       if (!docSnapshot.exists) {
         await userDoc.set({

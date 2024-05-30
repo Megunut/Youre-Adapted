@@ -11,19 +11,20 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashState extends State<SplashScreen> {
+  @override
   void initState() {
     super.initState();
     startTimer();
   }
 
   startTimer() {
-    var duration = Duration(seconds: 4);
+    var duration = const Duration(seconds: 4);
     return Timer(duration, route);
   }
 
   route() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => AuthGate()));
+        context, MaterialPageRoute(builder: (context) => const AuthGate()));
   }
 
   @override
