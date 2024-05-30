@@ -20,6 +20,20 @@ class AuthGate extends StatelessWidget {
               GoogleProvider(clientId: "506382140602-5nercnd65poa9rn870km523kk5usq09a.apps.googleusercontent.com"),
             ],
             actions: [
+              AuthStateChangeAction<UserCreated>((context, state) async {
+                await _createUserProfileIfNeeded(state.credential.user);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignInScreen(
+                      providers: [
+                        EmailAuthProvider(),
+                        GoogleProvider(clientId: "506382140602-5nercnd65poa9rn870km523kk5usq09a.apps.googleusercontent.com"),
+                      ],
+                    ),
+                  ),
+                );
+              }),
               AuthStateChangeAction<SignedIn>((context, state) {
                 _createUserProfileIfNeeded(state.user);
               }),
