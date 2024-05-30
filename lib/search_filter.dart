@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Item {
-  final String name;
+  final String bookTitle;
   final String genre;
 
-  Item({required this.name, required this.genre});
+  Item({required this.bookTitle, required this.genre});
 
   factory Item.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data() as Map<String, dynamic>;
     return Item(
-      name: data['name'] ??
+      bookTitle: data['bookTitle'] ??
           '', // name of the item (will try later to make search for initials or incomplete name string)
       genre: data['genre'] ?? '', // horror, triller, action, etc.
     );
@@ -100,7 +100,7 @@ class _FilterSearchPageState extends State<FilterSearchPage> {
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(items[index].name),
+                      title: Text(items[index].bookTitle),
                       subtitle: Text(items[index].genre),
                     );
                   },
