@@ -1,11 +1,9 @@
-import 'package:book_review/screens/review_screen.dart';
-import 'package:book_review/test_lists.dart';
+import 'package:book_review/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'home.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -35,9 +33,6 @@ class AuthGate extends StatelessWidget {
                     ),
                   ),
                 );
-              }),
-              AuthStateChangeAction<SignedIn>((context, state) {
-                _createUserProfileIfNeeded(state.user);
               }),
             ],
             headerBuilder: (context, constraints, shrinkOffset) {
@@ -78,7 +73,7 @@ class AuthGate extends StatelessWidget {
           );
         }
 
-        return TestList();
+        return HomeScreen();
       },
     );
   }
@@ -90,7 +85,7 @@ class AuthGate extends StatelessWidget {
       if (!docSnapshot.exists) {
         await userDoc.set({
           'email': user.email,
-          'name': user.displayName ?? '',
+          'name': user.displayName?.isNotEmpty == true ? user.displayName : 'Anonymous',
           'bio': '',
           'favorites': [],
           'recentReviews': [],
