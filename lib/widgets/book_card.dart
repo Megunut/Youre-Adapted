@@ -80,18 +80,6 @@ class BookCard extends StatelessWidget {
           Divider(),
           Text(description),
           SizedBox(height: 16),
-          Center(
-            child: ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.pink, // text color
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-              ),
-              child: Text('Submit a Review'),
-            ),
-          ),
         ],
       ),
     );
