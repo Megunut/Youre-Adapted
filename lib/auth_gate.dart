@@ -36,11 +36,11 @@ class AuthGate extends StatelessWidget {
               }),
             ],
             headerBuilder: (context, constraints, shrinkOffset) {
-              return Padding(
-                padding: const EdgeInsets.all(20),
+              return const Padding(
+                padding: EdgeInsets.all(20),
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.asset('assets/flutterfire_300x.png'),
+                  child: SizedBox(height:300)
                 ),
               );
             },
@@ -48,8 +48,8 @@ class AuthGate extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: action == AuthAction.signIn
-                    ? const Text('Welcome to FlutterFire, please sign in!')
-                    : const Text('Welcome to Flutterfire, please sign up!'),
+                    ? const Text("Welcome to You're Adapted, please sign in!")
+                    : const Text("Welcome to You're Adapted,, please sign up!"),
               );
             },
             footerBuilder: (context, action) {
