@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/user_profile_service.dart';
 import '../models/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../splash.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -54,6 +55,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  // Logs out the user and navigates to the login screen
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => SplashScreen()), 
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +87,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ElevatedButton(
                     onPressed: _updateUserProfile,
                     child: Text('Update Profile'),
+                  ),
+                  SizedBox(height: 20), // Add some spacing between buttons
+                  ElevatedButton(
+                    onPressed: _logout,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red, // Set the button color to red
+                    ),
+                    child: Text('Logout'),
                   ),
                 ],
               ),

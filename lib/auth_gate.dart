@@ -1,10 +1,9 @@
-import 'package:book_review/screens/review_screen.dart';
+import 'package:book_review/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'home.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -35,16 +34,13 @@ class AuthGate extends StatelessWidget {
                   ),
                 );
               }),
-              AuthStateChangeAction<SignedIn>((context, state) {
-                _createUserProfileIfNeeded(state.user);
-              }),
             ],
             headerBuilder: (context, constraints, shrinkOffset) {
-              return Padding(
-                padding: const EdgeInsets.all(20),
+              return const Padding(
+                padding: EdgeInsets.all(20),
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.asset('assets/flutterfire_300x.png'),
+                  child: SizedBox(height:300)
                 ),
               );
             },
@@ -52,8 +48,8 @@ class AuthGate extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: action == AuthAction.signIn
-                    ? const Text('Welcome to FlutterFire, please sign in!')
-                    : const Text('Welcome to Flutterfire, please sign up!'),
+                    ? const Text("Welcome to You're Adapted, please sign in!")
+                    : const Text("Welcome to You're Adapted,, please sign up!"),
               );
             },
             footerBuilder: (context, action) {
@@ -77,7 +73,7 @@ class AuthGate extends StatelessWidget {
           );
         }
 
-        return ReviewScreen();
+        return HomeScreen();
       },
     );
   }
@@ -89,7 +85,7 @@ class AuthGate extends StatelessWidget {
       if (!docSnapshot.exists) {
         await userDoc.set({
           'email': user.email,
-          'name': user.displayName ?? '',
+          'name': user.displayName?.isNotEmpty == true ? user.displayName : 'Anonymous',
           'bio': '',
           'favorites': [],
           'recentReviews': [],
